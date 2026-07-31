@@ -156,3 +156,5 @@ ts() {
 # 在 ~/.zshrc.local 中设置 ANTHROPIC_API_KEY 等敏感变量
 # =============================================
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+reset
