@@ -1,15 +1,8 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 # =============================================
-# Oh My Zsh 基础配置
+# Oh My Zsh (只用插件，主题交给 starship)
 # =============================================
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
@@ -21,13 +14,9 @@ export LANGUAGE="en_US:en"
 export LC_ALL="en_US.UTF-8"
 
 # =============================================
-# PATH 配置
+# PATH
 # =============================================
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.pixi/bin:$PATH"
-export PATH="$HOME/.linuxbrew/bin:$PATH"
-export PATH="~/data_HD/bin:$PATH"
-
+export PATH="$HOME/.local/bin:$HOME/.pixi/bin:$HOME/data_HD/bin:$PATH"
 
 # =============================================
 # Homebrew (Linuxbrew)
@@ -35,7 +24,7 @@ export PATH="~/data_HD/bin:$PATH"
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 
 # =============================================
-# Conda - 按需启用
+# Conda
 # =============================================
 __conda_setup="$("$HOME/miniconda3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
@@ -46,6 +35,8 @@ else
     [ -d "$HOME/miniconda3/bin" ] && export PATH="$HOME/miniconda3/bin:$PATH"
 fi
 unset __conda_setup
+# 若不希望每次自动激活 base，注释掉下一行
+conda activate base
 
 # =============================================
 # NVM
@@ -73,7 +64,6 @@ SAVEHIST=2000
 # =============================================
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
@@ -83,16 +73,23 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 # =============================================
 # 别名
 # =============================================
+# eza 替代 ls
+alias ls='eza --icons'
+alias ll='eza -la --icons --git'
+alias la='eza -a --icons'
+alias l='eza -CF --icons'
+alias lt='eza --tree --icons'
+
 alias zshconfig="mate ~/.zshrc"
 alias ohmyzsh="mate ~/.oh-my-zsh"
 alias cz="codewiz-cc"
 alias cl="clear"
-alias ll='ls -ahlF'
-alias la='ls -A'
-alias l='ls -CF'
+alias sz='source ~/.zshrc'
 alias cg='chgrp -R'
 alias sp="source .venv/bin/activate"
 alias tmux-kill="tmux kill-session -t"
+alias gitr="git remote set-url origin"
+alias hlp='tldr'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # 加载外部别名
@@ -109,85 +106,53 @@ export no_proxy=localhost,127.0.0.1,::1
 export NO_PROXY=localhost,127.0.0.1,::1
 
 # =============================================
-# TLDR
+# 其他环境变量
 # =============================================
+export SHELL=/usr/bin/zsh
+export TERMINFO_DIRS="/usr/share/terminfo:/lib/terminfo"
 export TLDR_LANGUAGE="zh"
-alias hlp='tldr'
 
 # =============================================
-# thefuck
+# 外部工具集成
 # =============================================
+# thefuck
 if command -v thefuck &> /dev/null; then
     eval $(thefuck --alias)
 fi
 
-# =============================================
-# lesspi
-# =============================================
+# lesspipe
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
+# starship / zoxide / fzf
+eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 # =============================================
-# Hugging Face 镜像下载工具
+# 工具函数
 # =============================================
+# Hugging Face 镜像下载
 hfd() {
     wget https://hf-mirror.com/hfd/hfd.sh && \
     chmod a+x hfd.sh && \
     HF_ENDPOINT=https://hf-mirror.com bash ./hfd.sh "$@"
 }
-# =============================================
-# 工具函数
-# =============================================
+
+# 重新加载配置
 reload() {
     source ~/.zshrc
     echo "配置已重新加载"
 }
 
-# =============================================
-# Claude Code / Anthropic API
-# =============================================
-# 注意: 请在 ~/.zshrc.local 或 ~/.secrets 中设置以下环境变量:
-# export ANTHROPIC_API_KEY="your-api-key"
-# export ANTHROPIC_BASE_URL="your-base-url"
-# export ANTHROPIC_AUTH_TOKEN="your-auth-token"
-
-# 加载本地私密配置（不提交到 Git）
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
-
-# =============================================
-# 其他环境变量
-# =============================================
-export SHELL=/usr/bin/zsh
-export TERMINFO_DIRS="/usr/share/terminfo:/lib/terminfo"
-
-# =============================================
-# 需要自动执行的一些指令
-# =============================================
-# conda deactivate
-
-export PATH="$HOME/.local/bin:$PATH"
-eval "$(starship init zsh)"
-eval "$(zoxide init zsh)"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# eza 替代 ls
-alias ls='eza --icons'
-alias ll='eza -la --icons --git'
-alias lt='eza --tree --icons'
-# export PATH="$(npm bin -g):$PATH"  # npm not always available
-
-# git的相关设置
-alias gitr="git remote set-url origin"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-conda activate base
-reset
-alias sz='source ~/.zshrc'
-
+# tmux 交互式切换 session
 ts() {
-  local session
-  session=$(tmux ls -F "#{session_name}" 2>/dev/null | fzf --height 40% --reverse)
-  [ -n "$session" ] && tmux a -t "$session"
+    local session
+    session=$(tmux ls -F "#{session_name}" 2>/dev/null | fzf --height 40% --reverse)
+    [ -n "$session" ] && tmux a -t "$session"
 }
+
+# =============================================
+# 本地私密配置（不入库）
+# 在 ~/.zshrc.local 中设置 ANTHROPIC_API_KEY 等敏感变量
+# =============================================
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
