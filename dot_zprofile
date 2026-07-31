@@ -1,0 +1,3 @@
+
+# Created by `pipx` on 2026-07-14 08:58:05
+export PATH="$PATH:/root/.local/bin"
