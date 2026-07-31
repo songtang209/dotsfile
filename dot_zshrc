@@ -183,6 +183,7 @@ alias gitr="git remote set-url origin"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 conda activate base
+reset
 alias sz='source ~/.zshrc'
 
 ts() {
