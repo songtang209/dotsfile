@@ -133,9 +133,16 @@ eval "$(zoxide init zsh)"
 # =============================================
 # Hugging Face 镜像下载
 hfd() {
-    wget https://hf-mirror.com/hfd/hfd.sh && \
-    chmod a+x hfd.sh && \
-    HF_ENDPOINT=https://hf-mirror.com bash ./hfd.sh "$@"
+    local HFD_SCRIPT="$HOME/.local/bin/hfd.sh"
+
+    if [ ! -f "$HFD_SCRIPT" ]; then
+        echo "Installing hfd.sh..."
+        mkdir -p "$HOME/.local/bin"
+        wget https://hf-mirror.com/hfd/hfd.sh -O "$HFD_SCRIPT" || return 1
+        chmod +x "$HFD_SCRIPT"
+    fi
+
+    HF_ENDPOINT=https://hf-mirror.com bash "$HFD_SCRIPT" "$@"
 }
 
 # 重新加载配置
