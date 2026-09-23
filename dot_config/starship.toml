@@ -15,7 +15,6 @@ $line_break\
 $character"""
 
 right_format = """
-$conda\
 $nodejs\
 $python\
 $java\
@@ -129,12 +128,6 @@ format = '[[ $symbol( $version)(\(#$virtualenv\)) ](fg:crust bg:green)]($style)'
 symbol = ""
 style = "bg:sapphire"
 format = '[[ $symbol( $context) ](fg:crust bg:sapphire)]($style)'
-
-[conda]
-symbol = " "
-style = "bg:sapphire fg:crust"
-format = '[](fg:sapphire)[$symbol$environment ]($style)[](fg:sapphire)'
-ignore_base = false
 
 [time]
 disabled = true
@@ -270,4 +263,3 @@ surface0 = "#363a4f"
 base = "#24273a"
 mantle = "#1e2030"
 crust = "#181926"
-
